@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Dynamic;
-using System.Threading;
 using System.Threading.Tasks;
 using CitizenFX.Core;
-using CalloutAPI;
 using CitizenFX.Core.Native;
+using FivePD.API;
 
 namespace KidnappingCallouts
 {
 
-    [CalloutProperties("Kidnapping", "BGHDDevelopment", "0.0.2", Probability.Medium)]
+    [CalloutProperties("Kidnapping", "BGHDDevelopment", "0.0.3", Probability.Medium)]
     public class NormalKidnapping : Callout
     {
 
