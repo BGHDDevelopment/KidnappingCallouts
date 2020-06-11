@@ -9,7 +9,7 @@ using FivePD.API;
 namespace KidnappingCallouts
 {
 
-    [CalloutProperties("Van Kidnapping", "BGHDDevelopment", "0.0.3", Probability.Medium)]
+    [CalloutProperties("Van Kidnapping", "BGHDDevelopment", "0.0.3")]
     public class DeathKidnapping : Callout
     {
 
