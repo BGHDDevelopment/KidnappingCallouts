@@ -24,7 +24,7 @@ namespace KidnappingCallouts
             Random rnd = new Random();
             float offsetX = rnd.Next(100, 700);
             float offsetY = rnd.Next(100, 700);
-            InitBase(World.GetNextPositionOnStreet(Game.PlayerPed.GetOffsetPosition(new Vector3(offsetX, offsetY, 0))));
+            InitInfo(World.GetNextPositionOnStreet(Game.PlayerPed.GetOffsetPosition(new Vector3(offsetX, offsetY, 0))));
             ShortName = "Kidnapping";
             CalloutDescription = "Reports show a suspect has kidnapped a person.";
             ResponseCode = 3;
@@ -35,7 +35,7 @@ namespace KidnappingCallouts
         public async override void OnStart(Ped player)
         {
             base.OnStart(player);
-            dynamic playerData = GetPlayerData();
+            dynamic playerData = Utilities.GetPlayerData();
             string displayName = playerData.DisplayName;
             driver.Weapons.Give(WeaponHash.Pistol, 30, true, true);
             API.SetDriveTaskMaxCruiseSpeed(driver.GetHashCode(), 35f);
@@ -46,8 +46,8 @@ namespace KidnappingCallouts
             car.AttachBlip();
             driver.AttachBlip();
             Vic.AttachBlip();
-            dynamic data2 = await GetPedData(Vic.NetworkId);
-            dynamic data1 = await GetPedData(driver.NetworkId);
+            dynamic data2 = await Utilities.GetPedData(Vic.NetworkId);
+            dynamic data1 = await Utilities.GetPedData(driver.NetworkId);
             string firstname2 = data2.Firstname;
             string firstname = data1.Firstname;
             API.Wait(6000);
@@ -59,9 +59,9 @@ namespace KidnappingCallouts
 
         }
 
-        public async override Task Init()
+        public async override Task OnAccept()
         {
-            OnAccept();
+            InitBlip();
             driver = await SpawnPed(GetRandomPed(), Location + 2);
             Vic = await SpawnPed(GetRandomPed(), Location + 1);
             Random random = new Random();
@@ -70,7 +70,7 @@ namespace KidnappingCallouts
             car = await SpawnVehicle(Hash, Location);
             driver.SetIntoVehicle(car, VehicleSeat.Driver);
             Vic.SetIntoVehicle(car, VehicleSeat.Passenger);
-            dynamic playerData = GetPlayerData();
+            dynamic playerData = Utilities.GetPlayerData();
             string displayName = playerData.DisplayName;
             dynamic datacar = await Utilities.GetVehicleData(car.NetworkId);
             string vehicleName = datacar.VehicleName;
@@ -85,7 +85,7 @@ namespace KidnappingCallouts
             };
             items.Add(Pistol);
             data.items = items;
-            SetPedData(driver.NetworkId,data);
+            Utilities.SetPedData(driver.NetworkId,data);
             
             Utilities.ExcludeVehicleFromTrafficStop(car.NetworkId,true);
             
