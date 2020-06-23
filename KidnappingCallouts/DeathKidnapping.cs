@@ -29,6 +29,7 @@ namespace KidnappingCallouts
             CalloutDescription = "Reports show two suspects has kidnapped a person.";
             ResponseCode = 3;
             StartDistance = 150f;
+            UpdateData();
         }
 
         public async override void OnStart(Ped player)
@@ -75,7 +76,9 @@ namespace KidnappingCallouts
             Vic.SetIntoVehicle(car, VehicleSeat.LeftRear);
             dynamic playerData = GetPlayerData();
             string displayName = playerData.DisplayName;
-            Notify("~r~[KidnappingCallouts] ~y~Officer ~b~" + displayName + ",~y~ the suspects are driving a van!");
+            dynamic datacar = await Utilities.GetVehicleData(car.NetworkId);
+            string vehicleName = datacar.VehicleName;
+            Notify("~r~[KidnappingCallouts] ~y~Officer ~b~" + displayName + ",~y~ the suspects are driving a " + vehicleName + "!");
             
             //Driver Data
             dynamic data = new ExpandoObject();
@@ -98,6 +101,8 @@ namespace KidnappingCallouts
             items.Add(SMG);
             data2.items2 = items2;
             SetPedData(driver2.NetworkId,data2);
+            
+            Utilities.ExcludeVehicleFromTrafficStop(car.NetworkId,true);
             
             //Tasks
             driver.AlwaysKeepTask = true;
