@@ -29,7 +29,6 @@ namespace KidnappingCallouts
             CalloutDescription = "Reports show two suspects has kidnapped a person.";
             ResponseCode = 3;
             StartDistance = 150f;
-            UpdateData();
         }
 
         public async override void OnStart(Ped player)
@@ -67,6 +66,7 @@ namespace KidnappingCallouts
         public async override Task OnAccept()
         {
             InitBlip();
+            UpdateData();
             driver = await SpawnPed(GetRandomPed(), Location + 2);
             driver2 = await SpawnPed(GetRandomPed(), Location + 1);
             Vic = await SpawnPed(GetRandomPed(), Location + 1);
