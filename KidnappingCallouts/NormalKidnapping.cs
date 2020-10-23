@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using FivePD.API;
+using FivePD.API.Utils;
 
 namespace KidnappingCallouts
 {
 
-    [CalloutProperties("Kidnapping", "BGHDDevelopment", "0.0.3")]
+    [CalloutProperties("Kidnapping", "BGHDDevelopment", "0.0.4")]
     public class NormalKidnapping : Callout
     {
 
         private Vehicle car;
         Ped driver;
         Ped Vic;
-        List<object> items = new List<object>();
         private string[] carList = { "speedo", "speedo2", "stanier", "stinger", "stingergt", "stratum", "stretch", "taco", "tornado", "tornado2", "tornado3", "tornado4", "tourbus", "vader", "voodoo2", "dune5", "youga", "taxi", "tailgater", "sentinel2", "sentinel", "sandking2", "sandking", "ruffian", "rumpo", "rumpo2", "oracle2", "oracle", "ninef2", "ninef", "minivan", "gburrito", "emperor2", "emperor"};
         
         public NormalKidnapping()
@@ -34,7 +33,7 @@ namespace KidnappingCallouts
         public async override void OnStart(Ped player)
         {
             base.OnStart(player);
-            dynamic playerData = Utilities.GetPlayerData();
+            PlayerData playerData = Utilities.GetPlayerData();
             string displayName = playerData.DisplayName;
             driver.Weapons.Give(WeaponHash.Pistol, 30, true, true);
             API.SetDriveTaskMaxCruiseSpeed(driver.GetHashCode(), 35f);
@@ -45,10 +44,10 @@ namespace KidnappingCallouts
             car.AttachBlip();
             driver.AttachBlip();
             Vic.AttachBlip();
-            dynamic data2 = await Utilities.GetPedData(Vic.NetworkId);
-            dynamic data1 = await Utilities.GetPedData(driver.NetworkId);
-            string firstname2 = data2.Firstname;
-            string firstname = data1.Firstname;
+            PedData data2 = await Utilities.GetPedData(Vic.NetworkId);
+            PedData data1 = await Utilities.GetPedData(driver.NetworkId);
+            string firstname2 = data2.FirstName;
+            string firstname = data1.FirstName;
             API.Wait(6000);
             DrawSubtitle("~r~[" + firstname2 + "] ~s~Help me please!", 5000);
             API.Wait(6000);
@@ -62,29 +61,30 @@ namespace KidnappingCallouts
         {
             InitBlip();
             UpdateData();
-            driver = await SpawnPed(GetRandomPed(), Location + 2);
-            Vic = await SpawnPed(GetRandomPed(), Location + 1);
+            driver = await SpawnPed(RandomUtils.GetRandomPed(), Location + 2);
+            Vic = await SpawnPed(RandomUtils.GetRandomPed(), Location + 1);
             Random random = new Random();
             string cartype = carList[random.Next(carList.Length)];
             VehicleHash Hash = (VehicleHash) API.GetHashKey(cartype);
             car = await SpawnVehicle(Hash, Location);
             driver.SetIntoVehicle(car, VehicleSeat.Driver);
             Vic.SetIntoVehicle(car, VehicleSeat.Passenger);
-            dynamic playerData = Utilities.GetPlayerData();
+            PlayerData playerData = Utilities.GetPlayerData();
             string displayName = playerData.DisplayName;
-            dynamic datacar = await Utilities.GetVehicleData(car.NetworkId);
-            string vehicleName = datacar.VehicleName;
+            VehicleData datacar = await Utilities.GetVehicleData(car.NetworkId);
+            string vehicleName = datacar.Name;
             Notify("~r~[KidnappingCallouts] ~y~Officer ~b~" + displayName + ",~y~ the suspect is driving a " + vehicleName + "!");
             
             //Driver Data
-            dynamic data = new ExpandoObject();
-            data.alcoholLevel = 0.01;
-            object Pistol = new {
+            PedData data = new PedData();
+            data.BloodAlcoholLevel = 0.01;
+            List<Item> items = new List<Item>();
+            Item Pistol = new Item {
                 Name = "Pistol",
                 IsIllegal = true
             };
             items.Add(Pistol);
-            data.items = items;
+            data.Items = items;
             Utilities.SetPedData(driver.NetworkId,data);
             
             Utilities.ExcludeVehicleFromTrafficStop(car.NetworkId,true);
@@ -109,10 +109,6 @@ namespace KidnappingCallouts
             API.BeginTextCommandPrint("STRING");
             API.AddTextComponentSubstringPlayerName(message);
             API.EndTextCommandPrint(duration, false);
-        }
-
-        public override void OnCancelBefore()
-        {
         }
     }
 
