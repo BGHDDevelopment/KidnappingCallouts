@@ -9,13 +9,12 @@ using FivePD.API.Utils;
 namespace KidnappingCallouts
 {
 
-    [CalloutProperties("Van Kidnapping", "BGHDDevelopment", "0.0.4")]
+    [CalloutProperties("Van Kidnapping", "BGHDDevelopment", "1.0.0")]
     public class DeathKidnapping : Callout
     {
 
         private Vehicle car;
-        Ped driver, driver2;
-        Ped Vic;
+        Ped driver, driver2, Vic;
 
         public DeathKidnapping()
         {
@@ -32,40 +31,6 @@ namespace KidnappingCallouts
         public async override void OnStart(Ped player)
         {
             base.OnStart(player);
-            PlayerData playerData = Utilities.GetPlayerData();
-            string displayName = playerData.DisplayName;
-            driver.Weapons.Give(WeaponHash.Pistol, 30, true, true);
-            driver2.Weapons.Give(WeaponHash.SMG, 150, true, true);
-            API.SetDriveTaskMaxCruiseSpeed(driver.GetHashCode(), 35f);
-            API.SetDriveTaskDrivingStyle(driver.GetHashCode(), 524852);
-            driver.Task.FleeFrom(player);
-            Vic.Task.HandsUp(1000000);
-            Notify("~o~Officer ~b~" + displayName + ",~o~ the driver is fleeing with the victim!");
-            car.AttachBlip();
-            driver.AttachBlip();
-            driver2.AttachBlip();
-            Vic.AttachBlip();
-            PedData data1 = await Utilities.GetPedData(driver.NetworkId);
-            PedData data2 = await Utilities.GetPedData(Vic.NetworkId);
-            PedData data3 = await Utilities.GetPedData(driver2.NetworkId);
-            
-            string firstname2 = data2.FirstName;
-            string firstname3 = data3.FirstName;
-            string firstname = data1.FirstName;
-            API.Wait(6000);
-            DrawSubtitle("~r~[" + firstname2 + "] ~s~Help me please!", 5000);
-            driver2.Task.FightAgainst(player);
-            API.Wait(6000);
-            DrawSubtitle("~r~[" + firstname3 + "] ~s~Do not speak!", 5000);
-            API.Wait(6000);
-            DrawSubtitle("~r~[" + firstname2 + "] ~s~PLEASE HELP!", 5000);
-
-        }
-
-        public async override Task OnAccept()
-        {
-            InitBlip();
-            UpdateData();
             driver = await SpawnPed(RandomUtils.GetRandomPed(), Location + 2);
             driver2 = await SpawnPed(RandomUtils.GetRandomPed(), Location + 1);
             Vic = await SpawnPed(RandomUtils.GetRandomPed(), Location + 1);
@@ -111,6 +76,39 @@ namespace KidnappingCallouts
             driver2.BlockPermanentEvents = true;
             Vic.AlwaysKeepTask = true;
             Vic.BlockPermanentEvents = true;
+            
+            driver.Weapons.Give(WeaponHash.Pistol, 30, true, true);
+            driver2.Weapons.Give(WeaponHash.SMG, 150, true, true);
+            API.SetDriveTaskMaxCruiseSpeed(driver.GetHashCode(), 35f);
+            API.SetDriveTaskDrivingStyle(driver.GetHashCode(), 524852);
+            driver.Task.FleeFrom(player);
+            Vic.Task.HandsUp(1000000);
+            Notify("~o~Officer ~b~" + displayName + ",~o~ the driver is fleeing with the victim!");
+            car.AttachBlip();
+            driver.AttachBlip();
+            driver2.AttachBlip();
+            Vic.AttachBlip();
+            PedData data1 = await Utilities.GetPedData(driver.NetworkId);
+            PedData data4 = await Utilities.GetPedData(Vic.NetworkId);
+            PedData data3 = await Utilities.GetPedData(driver2.NetworkId);
+            
+            string firstname2 = data4.FirstName;
+            string firstname3 = data3.FirstName;
+            string firstname = data1.FirstName;
+            API.Wait(6000);
+            DrawSubtitle("~r~[" + firstname2 + "] ~s~Help me please!", 5000);
+            driver2.Task.FightAgainst(player);
+            API.Wait(6000);
+            DrawSubtitle("~r~[" + firstname3 + "] ~s~Do not speak!", 5000);
+            API.Wait(6000);
+            DrawSubtitle("~r~[" + firstname2 + "] ~s~PLEASE HELP!", 5000);
+
+        }
+
+        public async override Task OnAccept()
+        {
+            InitBlip();
+            UpdateData();
         }
 
 
